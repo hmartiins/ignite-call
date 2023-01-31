@@ -1,7 +1,7 @@
-import { signIn } from "next-auth/react";
 import NextAuth, { NextAuthOptions } from "next-auth";
-
 import GoogleProvider from "next-auth/providers/google";
+
+import { PrismaAdapter } from "../../../lib/auth/prisma-adapter";
 
 if (!process.env.GOOGLE_CLIENT_ID) {
   throw new Error("Google Client ID is not defined.");
@@ -12,6 +12,8 @@ if (!process.env.GOOGLE_CLIENT_SECRET) {
 }
 
 export const authOptions: NextAuthOptions = {
+  adapter: PrismaAdapter(),
+
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
