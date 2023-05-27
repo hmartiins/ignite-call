@@ -22,8 +22,8 @@ export function buildNextAuthOptions(
 
     providers: [
       GoogleProvider({
-        clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+        clientId: process.env.GOOGLE_CLIENT_ID!,
+        clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
 
         authorization: {
           params: {
@@ -52,6 +52,13 @@ export function buildNextAuthOptions(
         }
 
         return true;
+      },
+
+      async session({ session, user }) {
+        return {
+          ...session,
+          user,
+        };
       },
     },
   };
