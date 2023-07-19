@@ -9,7 +9,7 @@ import {
 
 import { ArrowRight } from "phosphor-react";
 
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Container, Header } from "../styles";
@@ -29,6 +29,7 @@ export default function TimeIntervals() {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { isSubmitting, errors },
   } = useForm({
     defaultValues: {
@@ -51,6 +52,8 @@ export default function TimeIntervals() {
     control,
   });
 
+  const intervals = watch("intervals");
+
   async function handleSetTimeIntervals() {}
 
   return (
@@ -70,7 +73,18 @@ export default function TimeIntervals() {
           {fields.map((field, index) => (
             <IntervalItem key={field.id}>
               <IntervalDay>
-                <Checkbox disabled={!field.enabled} />
+                <Controller
+                  control={control}
+                  name={`intervals.${index}.enabled`}
+                  render={({ field }) => (
+                    <Checkbox
+                      onCheckedChange={(checked) =>
+                        field.onChange(checked === true)
+                      }
+                      checked={field.value}
+                    />
+                  )}
+                />
                 <Text>{weekDays[field.weekDay]}</Text>
               </IntervalDay>
               <IntervalInputs>
@@ -78,12 +92,14 @@ export default function TimeIntervals() {
                   type="time"
                   size={"sm"}
                   step={60}
+                  disabled={!intervals[index].enabled}
                   {...register(`intervals.${index}.startTime`)}
                 />
                 <TextInput
                   type="time"
                   size={"sm"}
                   step={60}
+                  disabled={!intervals[index].enabled}
                   {...register(`intervals.${index}.endTime`)}
                 />
               </IntervalInputs>
